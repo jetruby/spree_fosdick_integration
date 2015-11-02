@@ -1,0 +1,5 @@
+ru:
+  spree:
+    fosdick:
+      order_shipped:
+        subject:              Заказ отправлен

@@ -1,0 +1,25 @@
+%table#listing_fosdick_shipments.index.sortable{'data-hook' => '', 'data-sortable-link' => update_positions_admin_fosdick_shipments_path}
+  %thead
+    %tr{'data-hook' => 'fosdick_shipments_header'}
+      %th.no-border
+      %th Fosdick order
+      %th External order
+      %th Tracking
+      %th Ship date
+      %th Created at
+      %th State
+      %th Errors
+  %tbody
+  - if fosdick_shipments.present?
+    - fosdick_shipments.each do |ship|
+      %tr{class: cycle('odd', 'even'), 'data-hook' => 'fosdick_shipments_row', id: ship.id}
+        %td.no-border
+          %span.handle
+        %td.align-center= ship.fosdick_order_num
+        %td.align-center= link_to ship.external_order_num, edit_admin_order_path(ship.shipment.order)
+        %td.align-center= ship.tracking_number
+        %td.align-center= ship.ship_date
+        %td.align-center= ship.created_at
+        %td.align-center= ship.state
+        %td{style: 'color: red;'}= ship.fosdick_exceptions.pluck(:message).uniq.join('. ') if ship.fosdick_exceptions.present?
+= paginate fosdick_shipments

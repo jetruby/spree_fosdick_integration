@@ -1,0 +1,5 @@
+en:
+  spree:
+    fosdick:
+      order_shipped:
+        subject:              Oreder shipped
