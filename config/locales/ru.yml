@@ -2,4 +2,13 @@ ru:
   spree:
     fosdick:
       order_shipped:
-        subject:              Заказ отправлен
+        subject:                     Заказ отправлен
+      fosdick_num:                   Fosdick номер
+      shipment_num:                  Номер доставки
+      state_exception:               Исключение
+      state_sent:                    Успешно отправлено
+      state_shipped:                 Успешно поставляется
+      integration_state:             Статус интеграции
+      date_range_created:            Диапазон дат - Дата создания
+      date_range_shipped:            Диапазон дат - Поставляется
+      select_integration_state:      Выберите статус интеграции

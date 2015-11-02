@@ -2,4 +2,13 @@ en:
   spree:
     fosdick:
       order_shipped:
-        subject:              Oreder shipped
+        subject:                     Oreder shipped
+      fosdick_num:                   Fosdick Number
+      shipment_num:                  External order
+      state_exception:               Exception
+      state_sent:                    Successfully sent
+      state_shipped:                 Successfully shipped
+      integration_state:             Integration state
+      date_range_created:            Date range - Created
+      date_range_shipped:            Date range - Shipped
+      select_integration_state:      Select integration state

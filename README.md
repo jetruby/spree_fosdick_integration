@@ -2,7 +2,7 @@
 
 TODO: Write a gem description
 
-## Installation
+##Installation
 
 Add this line to your application's Gemfile:
 
@@ -10,15 +10,44 @@ Add this line to your application's Gemfile:
 gem 'spree_fosdick_integration'
 ```
 
-And then execute:
+Bundle your dependencies and run the installation generator:
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install spree_fosdick_integration
+```shell
+bundle
+bundle exec rails g spree_fosdick_integration:install
+```
 
 ## Usage
+Create a rake task to push shipments to Fosdick iPost interface:
+
+```desc "Push shipments to Fosdick iPost interface"
+task push_shipments_fosdick: :environment do
+  eligible_shipments = Spree::Shipment.perform_fosdick_shipments
+
+  if eligible_shipments.present?
+    eligible_shipments.each do |shipment|
+      Fosdick::Processor.send_shipment(shipment, FOSDICK_CONFIG)
+    end
+  end
+end
+```
+
+Create a rake task to receive shipment information from Fosdick API:
+
+```desc "Receive shipment information from Fosdick API"
+task receive_shipments_fosdick: :environment do
+  eligible_shipments = Spree::FosdickShipment.eligible_fosdick_shipments
+
+  if eligible_shipments.present?
+    eligible_shipments.each do |fosdick_shipment|
+      # get tracking details
+      Fosdick::Processor.receive_shipment({external_order_num: fosdick_shipment.external_order_num }) if fosdick_shipment.tracking_number.nil?
+      # get ship_date
+      Fosdick::Processor.receive_shipment({external_order_num: fosdick_shipment.external_order_num }, 'shipments.json') if fosdick_shipment.ship_date.nil?
+    end
+  end
+end
+```
 
 TODO: Write usage instructions here
 

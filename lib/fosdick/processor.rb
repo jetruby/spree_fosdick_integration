@@ -55,7 +55,7 @@ module Fosdick
             fosdick_shipment.update(confirmation_sent: true)
           end
         end
-      elsif fosdick_response.is_a? Hash
+      else
         ExceptionLogger.new.log('Error', fosdick_response['error'], fosdick_shipment.id)
       end
     end

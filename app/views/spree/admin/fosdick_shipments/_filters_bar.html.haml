@@ -1,0 +1,36 @@
+.row
+  - content_for :table_filter do
+    %div{'data-hook' => 'admin_fosdick_shipments_index_search'}
+      = search_form_for [:admin, @search] do |f|
+        .field-block.alpha.four.columns
+          .date-range-filter.field
+            = label_tag :q_created_at, Spree.t('fosdick.date_range_created')
+            .date-range-fields
+              = f.text_field :created_at_gt, class: 'datepicker datepicker-from', value: params[:q][:created_at_gt], placeholder: Spree.t(:start)
+              %span.range-divider{style: 'padding-top: 3px;'}
+              = f.text_field :created_at_lt, class: 'datepicker datepicker-to', value: params[:q][:created_at_lt], placeholder: Spree.t(:stop)
+        .field-block.alpha.four.columns
+          .date-range-filter.field
+            = label_tag :q_ship_date, Spree.t('fosdick.date_range_shipped')
+            .date-range-fields
+              = f.text_field :ship_date_gt, class: 'datepicker datepicker-from', value: params[:q][:ship_date_gt], placeholder: Spree.t(:start)
+              %span.range-divider{style: 'padding-top: 3px;'}
+              = f.text_field :ship_date_lt, class: 'datepicker datepicker-to', value: params[:q][:ship_date_lt], placeholder: Spree.t(:stop)
+
+        .field-block.alpha.four.columns
+          .date-range-filter.field
+            = label_tag :q_external_order_num_cont, Spree.t('fosdick.shipment_num')
+            = f.text_field :external_order_num_cont
+
+        .four.columns
+          .field
+            = label_tag :q_state_count, Spree.t('fosdick.integration_state')
+            = f.select :state_eq, [[Spree.t('fosdick.successfully_sent'),'sent'],
+                                   [Spree.t('fosdick.successfully_shipped'),'shipped'],
+                                   [Spree.t('fosdick.state_exception'),'exception']],
+                                  {include_blank: Spree.t('fosdick.select_integration_state')}, class: 'select2'
+
+        .clearfix
+        .actions.filter-actions
+          %div{'data-hook' => 'admin_abandoned_orders_index_search_buttons'}
+            = button Spree.t(:filter_results), 'search'

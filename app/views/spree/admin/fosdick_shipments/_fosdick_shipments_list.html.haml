@@ -21,5 +21,8 @@
         %td.align-center= ship.ship_date
         %td.align-center= ship.created_at
         %td.align-center= ship.state
-        %td{style: 'color: red;'}= ship.fosdick_exceptions.pluck(:message).uniq.join('. ') if ship.fosdick_exceptions.present?
+        - if ship.fosdick_exceptions.present? && ship.state != 'shipped'
+          %td{style: 'color: red;'}= ship.fosdick_exceptions.pluck(:message).uniq.join('. ')
+        - else
+          %td
 = paginate fosdick_shipments
