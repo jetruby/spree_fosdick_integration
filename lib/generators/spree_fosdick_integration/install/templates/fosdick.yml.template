@@ -1,0 +1,18 @@
+defaults: &defaults
+  test: true
+  ipost_uri: 'https://www.unitycart.com'
+  client_name: test
+  adcode: TEST
+  client_code: ad54LIADFJ2754
+  basic_auth:
+    login: CLIENTTEST
+    password: TESTPW22415
+
+test:
+  <<: *defaults
+development:
+  <<: *defaults
+staging:
+  <<: *defaults
+production:
+  <<: *defaults
