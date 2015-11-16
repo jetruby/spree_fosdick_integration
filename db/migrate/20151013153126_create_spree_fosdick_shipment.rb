@@ -12,6 +12,6 @@ class CreateSpreeFosdickShipment < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index       :spree_fosdick_shipments, :spree_shipment_id
+    add_index :spree_fosdick_shipments, :spree_shipment_id
   end
 end

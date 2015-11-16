@@ -10,6 +10,6 @@ class CreateFosdickExceptions < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index       :spree_fosdick_exceptions, :spree_fosdick_shipment_id
+    add_index :spree_fosdick_exceptions, :spree_fosdick_shipment_id
   end
 end

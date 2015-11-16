@@ -7,8 +7,8 @@ module Fosdick
       log_fosdick_shipment(shipment, res)
     end
 
-    def self.receive_shipment(options={})
-      res = Fosdick::Receiver.new('shipments.json', options).call_api(FOSDICK_CONFIG)
+    def self.receive_shipment(options = {}, end_point = 'shipmentdetail.json' )
+      res = Fosdick::Receiver.new(end_point, options).call_api(FOSDICK_CONFIG)
 
       update_shipment_info(res, options)
     end
@@ -20,16 +20,16 @@ module Fosdick
 
       if fosdick_response.is_a? String
         Spree::FosdickShipment.where(fosdick_order_num: fosdick_response).first_or_create(
-          spree_shipment_id:  spree_shipment.id,
-          external_order_num: shipment['id'],
-          state:             'sent')
+            spree_shipment_id:  spree_shipment.id,
+            external_order_num: shipment['id'],
+            state:             'sent')
         spree_shipment.update(state: 'shipped', fosdick_state: 'success')
 
       else
         fosdick_shipment = Spree::FosdickShipment.create(
-          spree_shipment_id:  spree_shipment.id,
-          external_order_num: shipment['id'],
-          state:              'exception')
+            spree_shipment_id:  spree_shipment.id,
+            external_order_num: shipment['id'],
+            state:              'exception')
         Array(fosdick_response[:errors]).map {|exception| ExceptionLogger.new.log(fosdick_response[:code], exception.join(' - '), fosdick_shipment.id)}
       end
 
@@ -37,16 +37,17 @@ module Fosdick
     end
 
     def self.update_shipment_info(fosdick_response, options)
-      fosdick_shipment = Spree::FosdickShipment.where(fosdick_order_num: options[:fosdick_order_num]).first_or_create
+      shipment         = Spree::Shipment.find_by_number(options[:external_order_num])
+      fosdick_shipment = Spree::FosdickShipment.where(external_order_num: options[:external_order_num], spree_shipment_id: shipment.id).first_or_create
 
       if fosdick_response.is_a? Array
         fosdick_response.each do |fos_shipment|
           trackings = []
-          shipment  = fosdick_shipment.shipment
           ship_date = fos_shipment.has_key?('ship_date') ? fos_shipment['ship_date'].to_date : nil
 
-          fos_shipment['trackings'].each {|tracking| trackings << tracking['tracking_num']}
-          fosdick_shipment.update(tracking_number: trackings, ship_date: ship_date)
+          fos_shipment['trackings'].each {|tracking| trackings << tracking['tracking_num'] unless trackings.include?(tracking['tracking_num']) }
+          fosdick_shipment.update(tracking_number: trackings, ship_date: ship_date, fosdick_order_num: fos_shipment['fosdick_order_num'])
+          fosdick_shipment.update(state: 'shipped') unless ship_date.nil?
           shipment.update(shipped_at: ship_date, state: 'shipped', tracking: trackings.join(', ')) if shipment.present?
           shipment.order.update(shipment_state: 'shipped') if ship_date.present?
 
@@ -55,7 +56,7 @@ module Fosdick
             fosdick_shipment.update(confirmation_sent: true)
           end
         end
-      else
+      elsif fosdick_response.is_a? Hash
         ExceptionLogger.new.log('Error', fosdick_response['error'], fosdick_shipment.id)
       end
     end

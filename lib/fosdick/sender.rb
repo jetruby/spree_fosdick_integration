@@ -16,8 +16,7 @@ module Fosdick
 
         raise Fosdick::SendError
       end
-
-      return validate_and_return res
+      return validate_and_return(res)
     end
 
     private

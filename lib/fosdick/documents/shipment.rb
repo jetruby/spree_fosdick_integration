@@ -65,11 +65,7 @@ module Fosdick
         if @shipment['shipping_address']['firstname'].present?
           name = @shipment['shipping_address']['firstname']
 
-          if name.length > 15
-            name.slice 0..15
-          else
-            name
-          end
+          (name.length > 15) ? name.slice(0..15) : name
         end
       end
 
@@ -86,16 +82,7 @@ module Fosdick
       def ship_state
         state = @shipment['shipping_address']['state']
 
-        case state
-        when 'U.S. Armed Forces – Americas'
-          'AA'
-        when 'U.S. Armed Forces – Europe'
-          'AE'
-        when 'U.S. Armed Forces – Pacific'
-          'AP'
-        else
-          ModelUN.convert_state_name state
-        end
+        FOSDICK_STATES_EXCEPTIONS.has_key?(state) ? FOSDICK_STATES_EXCEPTIONS[state] : ModelUN.convert_state_name(state)
       end
     end
   end

@@ -6,8 +6,6 @@ module SpreeFosdickIntegration
 
       def self.source_paths
         paths = self.superclass.source_paths
-        # paths << File.expand_path('../templates', "../../#{__FILE__}")
-        # paths << File.expand_path('../templates', "../#{__FILE__}")
         paths << File.expand_path('../templates', __FILE__)
         paths.flatten
       end

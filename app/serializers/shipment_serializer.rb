@@ -1,14 +1,12 @@
 require 'active_model/serializer'
 
-require 'active_model/serializer'
-
 class ShipmentSerializer < ActiveModel::Serializer
   attributes :id, :order_id, :email, :cost, :status, :stock_location,
             :shipping_method, :tracking, :placed_on, :shipped_at, :totals,
             :updated_at, :channel, :items, :shipping_method_code
 
-  has_one :bill_to, serializer: AddressSerializer, root: "billing_address"
-  has_one :ship_to, serializer: AddressSerializer, root: "shipping_address"
+  has_one :bill_to, serializer: AddressSerializer, root: 'billing_address'
+  has_one :ship_to, serializer: AddressSerializer, root: 'shipping_address'
 
   def id
     object.number

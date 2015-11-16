@@ -1,6 +1,6 @@
 # SpreeFosdickIntegration
 
-TODO: Write a gem description
+Current gem provides easy integration for you Spree Commerce based apps with full service fulfillment services of Fosdick Fulfillment.
 
 ##Installation
 
@@ -16,11 +16,13 @@ Bundle your dependencies and run the installation generator:
 bundle
 bundle exec rails g spree_fosdick_integration:install
 ```
+Update ``` config/fosdick.yml ``` with your credentials received from Fosdick
 
 ## Usage
 Create a rake task to push shipments to Fosdick iPost interface:
 
-```desc "Push shipments to Fosdick iPost interface"
+```
+desc "Push shipments to Fosdick iPost interface"
 task push_shipments_fosdick: :environment do
   eligible_shipments = Spree::Shipment.perform_fosdick_shipments
 
@@ -34,7 +36,8 @@ end
 
 Create a rake task to receive shipment information from Fosdick API:
 
-```desc "Receive shipment information from Fosdick API"
+```
+desc "Receive shipment information from Fosdick API"
 task receive_shipments_fosdick: :environment do
   eligible_shipments = Spree::FosdickShipment.eligible_fosdick_shipments
 
@@ -49,12 +52,25 @@ task receive_shipments_fosdick: :environment do
 end
 ```
 
-TODO: Write usage instructions here
+Override the email view to customise:
 
-## Contributing
+```
+app/views/spree/fosdick_shipment_mailer/order_shipped.html.erb
+```
 
-1. Fork it ( https://github.com/[my-github-username]/spree_fosdick_integration/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+##Testing
+
+Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
+
+```shell
+bundle
+bundle exec rake test_app
+bundle exec rspec spec
+```
+
+When testing your applications integration with this extension you may use it's factories.
+Simply add this require statement to your spec_helper:
+
+```ruby
+require 'spree_fosdick_integration/factories'
+```

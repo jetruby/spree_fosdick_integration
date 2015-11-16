@@ -6,4 +6,5 @@ Spree::Core::Engine.routes.draw do
       end
     end
   end
+  get '123' => 'admin/fosdick_shipments#index'
 end

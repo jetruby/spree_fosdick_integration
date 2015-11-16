@@ -1,3 +1,4 @@
+= paginate fosdick_shipments
 %table#listing_fosdick_shipments.index.sortable{'data-hook' => '', 'data-sortable-link' => update_positions_admin_fosdick_shipments_path}
   %thead
     %tr{'data-hook' => 'fosdick_shipments_header'}
@@ -25,4 +26,3 @@
           %td{style: 'color: red;'}= ship.fosdick_exceptions.pluck(:message).uniq.join('. ')
         - else
           %td
-= paginate fosdick_shipments

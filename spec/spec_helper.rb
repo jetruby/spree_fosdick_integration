@@ -17,6 +17,21 @@ require File.expand_path('../dummy/config/environment.rb',  __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
+require 'shoulda/matchers'
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    # Choose a test framework:
+    with.test_framework :rspec
+
+    # Choose one or more libraries:
+    with.library :active_record
+    with.library :active_model
+    with.library :action_controller
+    # Or, choose the following (which implies all of the above):
+    with.library :rails
+  end
+end
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -29,10 +44,12 @@ require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/url_helpers'
 
 require 'spree_fosdick_integration/factories'
+require 'webmock/rspec'
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
+  config.include Devise::TestHelpers, type: :controller
   # == URL Helpers
   #
   # Allows access to Spree's routes in specs:
@@ -60,19 +77,21 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   # Ensure Suite is set to use transactions for speed.
-  config.before :suite do
-    DatabaseCleaner.strategy = :transaction
+  config.before(:suite) do
     DatabaseCleaner.clean_with :truncation
   end
 
-  # Before each spec check if it is a Javascript test and switch between using database transactions or not where necessary.
-  config.before :each do
-    DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
+  config.before(:each) do
+    if Capybara.current_driver == :rack_test
+      DatabaseCleaner.strategy = :transaction
+    else
+      DatabaseCleaner.strategy = :truncation
+    end
+
     DatabaseCleaner.start
   end
 
-  # After each spec clean the database.
-  config.after :each do
+  config.after(:each) do
     DatabaseCleaner.clean
   end
 
